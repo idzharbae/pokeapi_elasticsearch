@@ -8,18 +8,6 @@ from queue import Queue
 from threading import Thread
 
 
-def get_pokemon_data():
-    url = 'https://pokeapi.co/api/v2/pokemon/'
-    idx = 1
-    poke_data = []
-    res = requests.get (url+str(idx))
-    while 'Not Found' not in res.text and idx <= 10:
-        poke_data.append(json.loads(res.text))
-        idx += 1
-        res = requests.get (url+str(idx))
-    return poke_data
-
-
 def document_to_upsert_action(doc: dict):
     return {
         '_op_type': 'update',
