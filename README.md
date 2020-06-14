@@ -1,4 +1,4 @@
-# BLOG APP
+# PokeAPI Elasticsearch
 
 Simple pokemon search app intended to demonstrate the usage of elastic search
 
@@ -14,4 +14,3 @@ Simple pokemon search app intended to demonstrate the usage of elastic search
 `make docker-run`
 ## Run app
 `make run`
-# pokeapi_elasticsearch
