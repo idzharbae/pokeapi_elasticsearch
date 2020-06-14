@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokemon Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <div class="row" style="margin-top: 25px;">
+            <div class="card card-block col">
+                <div class="card-body">
+                    <div class="card-title">Search pokemon</div>
+                    <form action="/" method="GET">
+                        <div class="form-group">
+                            <input class="form-control" name="search_query" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 25px;">
+            <div class="col">
+                <table class="table">
+                    <thead>
+                        <th>Name</th>
+                        <th>Abilities</th>
+                        <th>Forms</th>
+                        <th>Moves</th>
+                    </thead>
+                    {% if search_results %}
+                    {% set pokemons = search_results['hits'] %}
+                    {% set total = search_results['total'] %}
+                    {% set pages = (total.value / 10.0)|round(0, 'ceil')|int %}
+                    Showing {{ pokemons|length }} results out of {{ total.value }}.
+
+                    <tbody>
+
+                        {% for poke in pokemons %}
+                            {% set pokemon = poke['_source']['doc'] %}
+                            <tr>
+                                <td>{{pokemon['name']}}</td>
+                                <td>
+                                    {% for ability in pokemon['abilities'] %}
+                                        {{ability['ability']['name']}},
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for form in pokemon['forms'] %}
+                                        {{form['name']}},
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for move in pokemon['moves'] %}
+                                        {{move['move']['name']}},
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>
+                {% if total.value > pokemons|length %}
+                    <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item {% if page-1 <= 0 %} disabled {% endif %}"><a class="page-link" href="/?search_query={{query}}&page={{page-1}}">Previous</a></li>
+                        {% for i in range(1, pages+1) %}
+                            <li class="page-item {% if page == i %} disabled {% endif %}"><a class="page-link" href="/?search_query={{query}}&page={{i}}"
+                            {% if i == page %} disabled {% endif %}>{{i}}</a></li>
+                        {% endfor %}
+                        <li class="page-item {% if page+1 > pages %} disabled {% endif %}"><a class="page-link" href="/?search_query={{query}}&page={{page+1}}"
+                        {% if page+1 > pages %} disabled {% endif %}>Next</a></li>
+                    </ul>
+                    </nav>
+                {% endif %}
+
+                {% else %}
+
+                <tr>
+                    <td colspan="4">No result</td>
+                </tr>
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</body>
+</html>
